@@ -9,9 +9,11 @@ export default class ServerConnection {
     }
 
     async apiCallSingle(request){
-      const res = await axios.post('/api/getroadobjecttypes', {'request': request});
+        console.log('Attempting to call server')
+        const res = await axios.get(request);
   
-      let data = res.data;
-      return data;
+        let data = res.data;
+        console.log(data)
+        return data;
     }
 }

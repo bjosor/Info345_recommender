@@ -4,19 +4,20 @@ import socketserver
 class Handler(http.server.SimpleHTTPRequestHandler):
     def do_HEAD(self):
         self.send_response(200)
-        self.send_header('Content.type', 'text/html')
+        self.send_header('Content-type', 'text/html')
         self.end_headers()
 
     def do_GET(self):
         print('path is: ', self.path)
         if '/request' in self.path:
-            respond('Good Stuff')
+            self.respond('Good Stuff')
         else:
             super(Handler, self).do_GET()
 
     def handle_http(self, data):
         self.send_response(200)
-        self.send_header('Content.type', 'application/json')
+        self.send_header('Content-type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
         return bytes(data, 'UTF-8')
 
