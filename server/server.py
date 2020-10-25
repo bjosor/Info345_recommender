@@ -9,8 +9,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         print('path is: ', self.path)
+        id = self.path.split('?')[1]
+        print(id)
         if '/request' in self.path:
-            self.respond('Good Stuff')
+            self.respond('[{"label": "pancakes","value": "1"}, {"label": "chicken","value": "2"}]')
         else:
             super(Handler, self).do_GET()
 
