@@ -1,22 +1,15 @@
 import pandas as pd
 from google_images_download import google_images_download
+import os
+import json
 
 #pip install git+https://github.com/Joeclinton1/google-images-download.git
 
 
-'''
-def read_ItemProfiles(csvName):
-
-    data = pd.read_csv(csvName, sep=';')
-
-    print(data)
-    print(data.to_string())
-
-'''
 
 
 
-
+#Reads a CSV file and returns the data
 def read_CSV_File(csvName, seperator):
 
     data = pd.read_csv(csvName, sep=seperator, header=None)
@@ -26,45 +19,30 @@ def read_CSV_File(csvName, seperator):
 
 
 
-
-'''
-def read_BMJDataALL(csvName):
-
-    data = pd.read_csv(csvName, sep='\t')
-
-    val = data.iloc[0]
-
-    print(val)
-
-    #print(val['Name'])
-
-    dishName = val['Name']
-
-    
-    return dishName
-'''
-
-
-
-
-
-
+#Takes in a search word and returns all dishes that contains word as json object and a list of names
 def searchDish(searchString):
 
     data = read_CSV_File('item-profiles2.csv', ';')
     
-    matchedIDs = []
+    matchedIDs = {}
+    names = []
     
     for i in data.index:
     
         val = data.iloc[i]
 
         if searchString.lower() in val[1].lower():
-            matchID.append(val[0])
 
-    print(matchedIDs)
+            matchedIDs[val[1]] = val[0]
+            names.append(val[1])
+        
+    #print(matchedIDs)
 
-    return matchedIDs
+    jsonObject = json.dumps(matchedIDs)
+
+    print(jsonObject)
+
+    return jsonObject, names
 
         
 
@@ -72,7 +50,7 @@ def searchDish(searchString):
 
 
 
-
+#Takes a user and return a list of names for their rated dishes in rating based descending order
 def findTopDishes(userCode):
     
     data = read_CSV_File('user-item-rating.csv', '\t')
@@ -95,11 +73,10 @@ def findTopDishes(userCode):
     userValues = sorted(userValues.items(), key=lambda x: x[1], reverse=True)
 
 
-    matchedIDs = []
+    recipeNames = []
 
     for x in userValues:
-        print(x[1][2])
-
+        #print(x[1][2])
 
         for y in data.index:
         
@@ -109,10 +86,47 @@ def findTopDishes(userCode):
             if str(x[1][2]) == valY[0]:
 
                 print(valY[1])
+                recipeNames.append(valY[1])
                 break
 
+    return recipeNames
 
 
+
+
+#Take a list of names and downloads an image from google images for each name in the list, returns list with paths of the images
+def downloadRecipeImages(recipeNamesList):
+    
+    imagePaths = []
+    for name in recipeNamesList:
+
+        try:
+            name = name.replace(',','')
+
+            response = google_images_download.googleimagesdownload()
+
+            arguments = {"keywords":name,"limit":1,"print_urls":True, "no_directory":True, "size":"large"}
+            paths = response.download(arguments)
+
+            oldName = paths[0][name][0].split('\\')[5]
+
+            if '.jpg' or '.JPG' in oldName:
+                newName = name+'.jpg'
+
+            elif '.png' or '.PNG' in oldName:
+                newName = name+'.png'
+            else:
+                print(name, ' Has wrong format')
+                continue
+
+            newPath = paths[0][name][0].replace(oldName, '') + newName
+            os.rename(paths[0][name][0], newPath)
+
+            imagePaths.append(newPath)
+
+    return imagePaths
+        except:
+            pass
 
 
 
@@ -123,39 +137,88 @@ def findTopDishes(userCode):
 #############################################################################################################    
 
 
+#Get recipes and download their image
+'''
+recipeNameList = findTopDishes(455)
+paths = downloadRecipeImages(recipeNameList)
+'''
+
+#Search for recipes and download images
+'''
+jsonData, names = searchDish('pizza')
+paths = downloadRecipeImages(names)
+'''
 
 
-findTopDishes(455)
-
-#searchDish('pizza')
 
 
 
 
 
 
+#Backup of old functions
+
+########################################
+def read_BMJDataALL(csvName, x):
+
+    data = pd.read_csv(csvName, sep='\t')
+
+    val = data.iloc[x]
+
+    dishName = val['Name']
     
-
-
-#read_ItemProfiles('item-profiles3.csv')
-
-#Download recipe image
-'''
-name = read_BMJDataALL('BMJ-data-all--b-new.csv')
+    return dishName
 
 
 
+def downloadRecipeImagesOld():
+    
+    data =read_CSV_File('BMJ-data-all--b-new.csv', '\t')
 
-try:
-    name = read_BMJDataALL('BMJ-data-all--b-new.csv', x)
+    temp = []
+
+    for x in range(0, len(data)):
+
+        try:
+            name = read_BMJDataALL('BMJ-data-all--b-new.csv', x)
+
+            name = name.replace(',','')
+
+            response = google_images_download.googleimagesdownload()
+
+            arguments = {"keywords":name,"limit":1,"print_urls":True, "no_directory":True, "size":"large"}
+            paths = response.download(arguments)
+
+            oldName = paths[0][name][0].split('\\')[5]
+
+            if '.jpg' or '.JPG' in oldName:
+                newName = name+'.jpg'
+
+            elif '.png' or '.PNG' in oldName:
+                newName = name+'.png'
+            else:
+                print(name, ' Has wrong format')
+                continue
+
+            temp.append(name)
+
+            newPath = paths[0][name][0].replace(oldName, '') + newName
+            os.rename(paths[0][name][0], newPath)
+        except:
+            pass
 
 
-    response = google_images_download.googleimagesdownload()
 
-    arguments = {"keywords":name,"limit":1,"print_urls":True, "no_directory":True}
-    paths = response.download(arguments)
-    print(paths)
-except:
-    pass
-'''
+
+
+
+
+
+
+
+
+
+
+
+
 
