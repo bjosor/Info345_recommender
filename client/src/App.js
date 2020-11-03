@@ -3,17 +3,20 @@ import Search from './pages/Search';
 import './App.css';
 import Login from './pages/Login';
 import ServerConnection from './Serverconnection';
+import TopBar from './components/TopBar'
 
 class App extends Component{
   constructor(props){
     super(props)
     this.state = {
-      loggedIn: false
+      loggedIn: false,
+      id: null
     }
 
     this.server = new ServerConnection('localhost')
 
     this.getLogin = this.getLogin.bind(this);
+    this.logout = this.logout.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState){
@@ -37,9 +40,24 @@ class App extends Component{
 
   }
 
+  //TODO
+  switchPage(page){
+    if (page === 'search'){
+      console.log('Woop')
+    }
+  }
+
+  logout(){
+    this.setState({
+      loggedIn: false,
+      id : null
+    })
+  }
+
   render(){
     return (
       <div className="App">
+          <TopBar logout={this.logout} loggedIn={this.state.loggedIn}/>
           {this.state.loggedIn ? 
           <Search 
           className='searchbox'
