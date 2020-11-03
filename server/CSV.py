@@ -34,6 +34,8 @@ def searchDish(searchString):
 
         val = data.iloc[i]
 
+        print('value: ', val[1])
+
         if searchString.lower() in val[1].lower():
 
             matchedIDs['label'] = val[1]
