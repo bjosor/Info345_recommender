@@ -4,6 +4,7 @@ from pandas import pandas as pd
 import os
 import json
 
+
 #pip install git+https://github.com/Joeclinton1/google-images-download.git
 
 
@@ -28,16 +29,17 @@ def read_CSV_File(csvName, seperator):
 def searchDish(searchString):
 
     data = read_CSV_File('item-profiles2.csv', ';')
-    
-    
+
     #names = []
     dictList = []
-    
+
     for i in data.index:
 
         matchedIDs = {}
-    
+
         val = data.iloc[i]
+
+        print('value: ', val[1])
 
         if searchString.lower() in val[1].lower():
             
@@ -115,10 +117,6 @@ def findTopDishes(userCode):
 
     
 
-
-#print(findTopDishes(455))
-
-
 '''
 #Take a list of names and downloads an image from google images for each name in the list, returns list with paths of the images
 def downloadRecipeImages(recipeNamesList):
@@ -151,13 +149,10 @@ def downloadRecipeImages(recipeNamesList):
             imagePaths.append(newPath)
 
     return imagePaths
+
         except:
             pass
 '''
-
-
-
-
 
 
 #############################################################################################################    
