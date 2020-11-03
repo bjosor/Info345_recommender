@@ -1,5 +1,6 @@
-import pandas as pd
-from google_images_download import google_images_download
+#import pandas as pd
+from pandas import pandas as pd
+#from google_images_download import google_images_download
 import os
 import json
 
@@ -16,6 +17,10 @@ def read_CSV_File(csvName, seperator):
     data = pd.read_csv(csvName, sep=seperator, header=None)
     
     return data
+
+
+#Get all user ID codes
+#def getUserIDs()
 
 
 
@@ -37,14 +42,14 @@ def searchDish(searchString):
         print('value: ', val[1])
 
         if searchString.lower() in val[1].lower():
-
+            
             matchedIDs['label'] = val[1]
             matchedIDs['value'] = val[0]
 
             dictList.append(matchedIDs)
             #matchedIDs[val[1]] = val[0]
             #names.append(val[1])
-
+        
     #print(matchedIDs)
 
     jsonObject = json.dumps(dictList)
@@ -54,8 +59,6 @@ def searchDish(searchString):
     return jsonObject
 
         
-
-
 
 
 
@@ -81,11 +84,16 @@ def findTopDishes(userCode):
 
     userValues = sorted(userValues.items(), key=lambda x: x[1], reverse=True)
 
+    dictList = []
 
-    recipeNames = []
+    #recipeNames = []
 
     for x in userValues:
+
+        matchedIDs = {}
+        
         #print(x[1][2])
+        matchedIDs['value'] = x[1][2]
 
         for y in data.index:
         
@@ -94,15 +102,22 @@ def findTopDishes(userCode):
 
             if str(x[1][2]) == valY[0]:
 
-                print(valY[1])
-                recipeNames.append(valY[1])
+                #print(valY[1])
+                matchedIDs['label'] = valY[1]
+                dictList.append(matchedIDs)
+                #recipeNames.append(valY[1])
                 break
 
-    return recipeNames
+    jsonObject = json.dumps(dictList)
 
+    #print(jsonObject)
+
+    return jsonObject
+    #return recipeNames
+
+    
 
 '''
-
 #Take a list of names and downloads an image from google images for each name in the list, returns list with paths of the images
 def downloadRecipeImages(recipeNamesList):
     
@@ -135,9 +150,9 @@ def downloadRecipeImages(recipeNamesList):
 
     return imagePaths
 
+        except:
+            pass
 '''
-
-
 
 
 #############################################################################################################    
@@ -215,7 +230,47 @@ def downloadRecipeImagesOld():
 
 
 
+def findTopDishesOld(userCode):
 
+    dictList = []
+    
+    data = read_CSV_File('user-item-rating.csv', '\t')
+    data2 = read_CSV_File('item-profiles2.csv', ';')
+
+    count = 0
+
+    userValues = {}
+    
+    for i in data.index:
+    
+        val = data.iloc[i]
+        
+        if int(val[0]) == int(userCode):
+            
+            userValues[count] = int(val[0]), val[2], int(val[1])
+            count = count + 1
+            
+
+    userValues = sorted(userValues.items(), key=lambda x: x[1], reverse=True)
+
+
+    recipeNames = []
+
+    for x in userValues:
+        #print(x[1][2])
+
+        for y in data.index:
+        
+            valY = data2.iloc[y]
+
+
+            if str(x[1][2]) == valY[0]:
+
+                #print(valY[1])
+                recipeNames.append(valY[1])
+                break
+
+    return recipeNames
 
 
 

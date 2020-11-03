@@ -15,9 +15,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         print(id)
         if '/request' in self.path:
             #self.respond('[{"label": "pancakes","value": "1"}, {"label": "chicken","value": "2"}]')
-            x = searchDish(id)
-            print('This thing here: ', x)
-            self.respond(x)
+            self.respond(searchDish(id))
         else:
             super(Handler, self).do_GET()
 
