@@ -1,5 +1,6 @@
 import http.server
 import socketserver
+from CSV import searchDish
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def do_HEAD(self):
@@ -10,9 +11,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         print('path is: ', self.path)
         id = self.path.split('?')[1]
+        id = id.split('=')[1]
         print(id)
         if '/request' in self.path:
-            self.respond('[{"label": "pancakes","value": "1"}, {"label": "chicken","value": "2"}]')
+            #self.respond('[{"label": "pancakes","value": "1"}, {"label": "chicken","value": "2"}]')
+            x = searchDish(id)
+            print('This thing here: ', x)
+            self.respond(x)
         else:
             super(Handler, self).do_GET()
 

@@ -3,6 +3,7 @@ from google_images_download import google_images_download
 import os
 import json
 
+
 #pip install git+https://github.com/Joeclinton1/google-images-download.git
 
 
@@ -23,26 +24,32 @@ def read_CSV_File(csvName, seperator):
 def searchDish(searchString):
 
     data = read_CSV_File('item-profiles2.csv', ';')
-    
-    matchedIDs = {}
-    names = []
-    
+
+    #names = []
+    dictList = []
+
     for i in data.index:
-    
+
+        matchedIDs = {}
+
         val = data.iloc[i]
 
         if searchString.lower() in val[1].lower():
 
-            matchedIDs[val[1]] = val[0]
-            names.append(val[1])
-        
+            matchedIDs['label'] = val[1]
+            matchedIDs['value'] = val[0]
+
+            dictList.append(matchedIDs)
+            #matchedIDs[val[1]] = val[0]
+            #names.append(val[1])
+
     #print(matchedIDs)
 
-    jsonObject = json.dumps(matchedIDs)
+    jsonObject = json.dumps(dictList)
 
     print(jsonObject)
 
-    return jsonObject, names
+    return jsonObject
 
         
 
@@ -92,7 +99,7 @@ def findTopDishes(userCode):
     return recipeNames
 
 
-
+'''
 
 #Take a list of names and downloads an image from google images for each name in the list, returns list with paths of the images
 def downloadRecipeImages(recipeNamesList):
@@ -125,11 +132,8 @@ def downloadRecipeImages(recipeNamesList):
             imagePaths.append(newPath)
 
     return imagePaths
-        except:
-            pass
 
-
-
+'''
 
 
 
